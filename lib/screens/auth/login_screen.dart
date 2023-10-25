@@ -2,10 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:gusa_cic/utils/colors.dart';
 import 'package:gusa_cic/widgets/button_widget.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
+import 'package:gusa_cic/widgets/textfield_widget.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -26,30 +35,92 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 50,),
-              Image.asset('assets/images/353653853_232117176242790_3682695260927349816_n-removebg-preview 1.png',
-              height: 175,),
-              SizedBox(height: 100,),
-              Image.asset('assets/images/Welcome to Barangay Gusa Report System!.png',
-              width: 250,),
-              Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                child: Divider(),
-              ),
-              SizedBox(height: 20,),
-              Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                child: TextWidget(text: 'Submit your complaints, incidents, and concerns effortlessly, track their progress, and communicate with barangay officials seamlessly. Together, lets build a safer and stronger community.', fontSize: 12,
-                fontFamily: 'Medium',
-                color: Colors.black,),
-              ),
-              SizedBox(height: 50,),
+              Image.asset('assets/images/Ellipse 1.png',
+              width: 380,),
+              SizedBox(height: 10,),
+              TextWidget(text: 'Welcome to GRS-CIC!', fontSize: 24,
+              fontFamily: 'Bold',
+              color: Colors.white,),
+                    SizedBox(height: 10,),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(30, 0, 30, 10),
+                      child: Card(
+                        child: Container(
+                          height: 350,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xff4093CE),
+                            Color(0xff9BCEF3),
+                          ],
+                        ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    TextFieldWidget(
+                                      prefixIcon: Icons.email,
+                                      
+                                      controller: emailController
+                                    ,label: 'Email',),
+                                     TextFieldWidget(
+                                      isObscure: true,
+                                      showEye: true,
+                                      prefixIcon: Icons.lock,
+                                      
+                                      controller: passwordController
+                                    ,label: 'Password',),
+                                    
+                                    TextButton(onPressed: () {}, child: TextWidget(text: 'Forgot Password', fontSize: 14,
+                                    color: Colors.white,
+                                    fontFamily: 'Bold',),),
+                                   
+                                   Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    
+                                    children: [
+                                      TextWidget(text: 'Do not have an account?', fontSize: 12,
+                                      color: Colors.white,),
+                                      SizedBox(width: 10,),
+                                    GestureDetector(
+                                      onTap: () {
+                                        
+                                      },
+                                      child: TextWidget(text: 'Signup', fontSize: 14,
+                                      color: Colors.white,
+                                      fontFamily: 'Bold',),
+                                    )
+                                    ],
+                                   ),
+                                   SizedBox(height: 20,),
               ButtonWidget(
                 radius: 20,
+                width: 250,
                 color: buttonColor,
-                label: 'Get Started', onPressed: () {
+                label: 'Login', onPressed: () {
+                     Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const LoginScreen()));
 
               },),
+               TextButton(onPressed: () {}, child: TextWidget(text: 'Administrator Login', fontSize: 14,
+                                    color: Colors.white,
+                                    fontFamily: 'Bold',),),
+                                    
+                                  ],
+                                ),
+                              ),
+                      
+                        ),
+                      ),
+                    ),
+             
 
               
             ],

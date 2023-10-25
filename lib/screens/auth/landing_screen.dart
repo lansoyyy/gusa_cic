@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gusa_cic/screens/auth/login_screen.dart';
 import 'package:gusa_cic/utils/colors.dart';
 import 'package:gusa_cic/widgets/button_widget.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
@@ -48,6 +49,8 @@ class LandingScreen extends StatelessWidget {
                 radius: 20,
                 color: buttonColor,
                 label: 'Get Started', onPressed: () {
+                     Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const LoginScreen()));
 
               },),
 

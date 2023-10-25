@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gusa_cic/utils/colors.dart';
 
 class TextFieldWidget extends StatefulWidget {
   final String? hint;
@@ -66,7 +67,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
                 style: TextStyle(
                   fontSize: 14,
                   fontFamily: 'Bold',
-                  color: Colors.amber[800],
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -108,6 +109,9 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
             textCapitalization: widget.textCapitalization!,
             keyboardType: widget.inputType,
             decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              prefixIcon: Icon(widget.prefixIcon),
               suffixIcon: widget.showEye! == true
                   ? IconButton(
                       onPressed: () {
