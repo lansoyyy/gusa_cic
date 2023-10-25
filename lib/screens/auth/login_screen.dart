@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gusa_cic/screens/auth/signup_screen.dart';
 import 'package:gusa_cic/utils/colors.dart';
 import 'package:gusa_cic/widgets/button_widget.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
@@ -91,6 +92,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       SizedBox(width: 10,),
                                     GestureDetector(
                                       onTap: () {
+                                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const SignupScreen()));
                                         
                                       },
                                       child: TextWidget(text: 'Signup', fontSize: 14,
