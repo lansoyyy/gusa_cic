@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gusa_cic/screens/myreports_screen.dart';
 import 'package:gusa_cic/utils/colors.dart';
 import 'package:gusa_cic/widgets/button_widget.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
@@ -7,7 +8,7 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext cowntext) {
+  Widget build(BuildContext context) {
     return  Scaffold(
       body: Container(
         height: double.infinity,
@@ -106,6 +107,8 @@ class HomeScreen extends StatelessWidget {
                                 height: 40,
                                 label: 'Select a report', onPressed: () {},),
                                 TextButton(onPressed: () {
+                                                  Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const MyreportsScreen()));
 
                                 }, child: TextWidget(text: 'My reports', fontSize: 14,
                                 color: Colors.white,
