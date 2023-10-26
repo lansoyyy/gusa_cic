@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gusa_cic/screens/auth/signup_screen.dart';
+import 'package:gusa_cic/screens/home_screen.dart';
 import 'package:gusa_cic/utils/colors.dart';
 import 'package:gusa_cic/widgets/button_widget.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
@@ -108,8 +109,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: 250,
                 color: buttonColor,
                 label: 'Login', onPressed: () {
-                     Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const LoginScreen()));
+                     Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const HomeScreen()));
 
               },),
                TextButton(onPressed: () {}, child: TextWidget(text: 'Administrator Login', fontSize: 14,
