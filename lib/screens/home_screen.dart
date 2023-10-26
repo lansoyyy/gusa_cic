@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gusa_cic/screens/add_report_page.dart';
 import 'package:gusa_cic/screens/myreports_screen.dart';
+import 'package:gusa_cic/screens/profile_screen.dart';
 import 'package:gusa_cic/utils/colors.dart';
 import 'package:gusa_cic/widgets/button_widget.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
@@ -31,17 +32,24 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.account_circle,
-                      color:Colors.white,
-                      size: 48,),
-                      SizedBox(width: 20,),
-                      TextWidget(text: 'John Doe', fontSize: 18,
-                      fontFamily: 'Bold',
-                      color: Colors.white,),
-                    ],
+                  GestureDetector(
+                  onTap: () {
+                     Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const ProfileScreen()));
+                  },
+
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(Icons.account_circle,
+                        color:Colors.white,
+                        size: 48,),
+                        SizedBox(width: 20,),
+                        TextWidget(text: 'John Doe', fontSize: 18,
+                        fontFamily: 'Bold',
+                        color: Colors.white,),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 20,),
                   Container(
