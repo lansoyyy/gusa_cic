@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gusa_cic/screens/add_report_page.dart';
+import 'package:gusa_cic/screens/admin/announcement_screen.dart';
 import 'package:gusa_cic/utils/colors.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
 
@@ -68,7 +69,7 @@ class AdminHomeScreen extends StatelessWidget {
                                 child: GestureDetector(
                                   onTap: () {
                                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>  AddreportScreen(
+                          builder: (context) =>  AnnouncementScreen(
                             type: i == 0 ? 'Announcements' : i == 1? 'Residents' : 'Concern',
                           )));
                                   },
