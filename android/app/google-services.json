@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "285052145226",
+    "project_id": "gusa-cic",
+    "storage_bucket": "gusa-cic.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:285052145226:android:2c4ae452bc5b8f61b6a0b3",
+        "android_client_info": {
+          "package_name": "com.example.gusa_cic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzjC2BHW5VQnlFyDRrMSkdUc_z4ZaFwDg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
