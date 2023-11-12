@@ -114,6 +114,7 @@ class _LoginScreenState extends State<SignupScreen> {
                               label: 'Gender',
                             ),
                             TextFieldWidget(
+                              inputType: TextInputType.number,
                               prefixIcon: Icons.phone,
                               controller: phonenumberController,
                               label: 'Mobile number',
@@ -125,7 +126,7 @@ class _LoginScreenState extends State<SignupScreen> {
                             ),
                             TextFieldWidget(
                               prefixIcon: Icons.bloodtype,
-                              controller: addressController,
+                              controller: bloodtypeController,
                               label: 'Blood Type',
                             ),
                             TextFieldWidget(
