@@ -19,6 +19,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final passController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,10 +140,50 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const AdminHomeScreen()));
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: TextWidget(
+                                      text: 'Enter Admin Password',
+                                      fontSize: 18,
+                                      fontFamily: 'Bold',
+                                    ),
+                                    content: SizedBox(
+                                      height: 100,
+                                      child: TextFieldWidget(
+                                          textColor: Colors.black,
+                                          label: 'Password',
+                                          showEye: true,
+                                          isObscure: true,
+                                          controller: passController),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          if (passController.text !=
+                                              'admin-password') {
+                                            Navigator.pop(context);
+                                            showToast(
+                                                'Incorrect admin password!');
+                                          } else {
+                                            Navigator.of(context).pushReplacement(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const AdminHomeScreen()));
+                                          }
+                                        },
+                                        child: TextWidget(
+                                          text: 'Continue',
+                                          fontSize: 18,
+                                          fontFamily: 'Bold',
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
                             },
                             child: TextWidget(
                               text: 'Administrator Login',

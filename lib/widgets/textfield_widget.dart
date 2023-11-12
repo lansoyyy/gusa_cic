@@ -15,6 +15,7 @@ class TextFieldWidget extends StatefulWidget {
   late Color? color;
   late Color? borderColor;
   late Color? hintColor;
+  late Color? textColor;
   late double? radius;
   final String? Function(String?)? validator; // Add validator parameter
   bool? isEnabled;
@@ -37,6 +38,7 @@ class TextFieldWidget extends StatefulWidget {
       this.height = 50,
       this.maxLine = 1,
       this.hintColor = Colors.white,
+      this.textColor = Colors.white,
       this.borderColor = Colors.grey,
       this.showEye = false,
       this.color = Colors.white,
@@ -67,7 +69,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
                 style: TextStyle(
                   fontSize: 14,
                   fontFamily: 'Bold',
-                  color: Colors.white,
+                  color: widget.textColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
