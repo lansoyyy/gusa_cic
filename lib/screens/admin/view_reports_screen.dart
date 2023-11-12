@@ -5,9 +5,16 @@ import 'package:gusa_cic/utils/colors.dart';
 import 'package:gusa_cic/widgets/button_widget.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
 
-class MyreportsScreen extends StatelessWidget {
-  const MyreportsScreen({super.key});
+class ViewReportsScreen extends StatefulWidget {
+  String? id;
 
+  ViewReportsScreen({super.key, required this.id});
+
+  @override
+  State<ViewReportsScreen> createState() => _ViewReportsScreenState();
+}
+
+class _ViewReportsScreenState extends State<ViewReportsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +55,7 @@ class MyreportsScreen extends StatelessWidget {
                     height: 20,
                   ),
                   TextWidget(
-                    text: 'My Reports',
+                    text: 'Reports',
                     fontSize: 18,
                     fontFamily: 'Bold',
                     color: Colors.white,
@@ -71,9 +78,7 @@ class MyreportsScreen extends StatelessWidget {
                             child: StreamBuilder<QuerySnapshot>(
                                 stream: FirebaseFirestore.instance
                                     .collection('Reports')
-                                    .where('uid',
-                                        isEqualTo: FirebaseAuth
-                                            .instance.currentUser!.uid)
+                                    .where('uid', isEqualTo: widget.id)
                                     .snapshots(),
                                 builder: (BuildContext context,
                                     AsyncSnapshot<QuerySnapshot> snapshot) {
