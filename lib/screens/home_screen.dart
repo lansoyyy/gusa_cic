@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gusa_cic/screens/add_report_page.dart';
 import 'package:gusa_cic/screens/myreports_screen.dart';
@@ -116,20 +117,41 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  TextWidget(
-                    text:
-                        '- Aliquip sint laboris incididunt anim proident adipisicing Lorem laborum consectetur irure.',
-                    fontSize: 12,
-                    color: Colors.black,
-                    fontFamily: 'Medium',
-                  ),
-                  TextWidget(
-                    text:
-                        '- Aliquip sint laboris incididunt anim proident adipisicing Lorem laborum consectetur irure.',
-                    fontSize: 12,
-                    color: Colors.black,
-                    fontFamily: 'Medium',
-                  ),
+                  StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('Announcements')
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          print(snapshot.error);
+                          return const Center(child: Text('Error'));
+                        }
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Padding(
+                            padding: EdgeInsets.only(top: 50),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.black,
+                              ),
+                            ),
+                          );
+                        }
+
+                        final data = snapshot.requireData;
+                        return Column(
+                          children: [
+                            for (int i = 0; i < data.docs.length; i++)
+                              TextWidget(
+                                text: '- ${data.docs[i]['desc']}',
+                                fontSize: 12,
+                                color: Colors.black,
+                                fontFamily: 'Medium',
+                              ),
+                          ],
+                        );
+                      }),
                   const SizedBox(
                     height: 20,
                   ),
