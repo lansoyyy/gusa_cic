@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gusa_cic/screens/add_report_page.dart';
 import 'package:gusa_cic/utils/colors.dart';
 import 'package:gusa_cic/widgets/button_widget.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
 import 'package:gusa_cic/widgets/textfield_widget.dart';
+import 'package:intl/intl.dart';
 
 class AdminReportsScreen extends StatefulWidget {
   String? type;
@@ -80,112 +82,150 @@ class _AnnouncementScreenState extends State<AdminReportsScreen> {
                           SizedBox(
                             height: 400,
                             child: SingleChildScrollView(
-                              child: DataTable(columns: [
-                                DataColumn(
-                                  label: TextWidget(
-                                    text: '',
-                                    fontSize: 13,
-                                    fontFamily: 'Bold',
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: TextWidget(
-                                    text: 'Reporter',
-                                    fontSize: 13,
-                                    fontFamily: 'Bold',
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: TextWidget(
-                                      text: 'Details',
-                                      fontSize: 13,
-                                      fontFamily: 'Bold'),
-                                ),
-                              ], rows: [
-                                for (int i = 0; i < 50; i++)
-                                  DataRow(cells: [
-                                    DataCell(
-                                      TextWidget(
-                                        text: '${i + 1}',
-                                        fontSize: 11,
+                              child: StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('Reports')
+                                      .where('categ', isEqualTo: widget.type)
+                                      .snapshots(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                                    if (snapshot.hasError) {
+                                      print(snapshot.error);
+                                      return const Center(child: Text('Error'));
+                                    }
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Padding(
+                                        padding: EdgeInsets.only(top: 50),
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      );
+                                    }
+
+                                    final data = snapshot.requireData;
+                                    return DataTable(columns: [
+                                      DataColumn(
+                                        label: TextWidget(
+                                          text: '',
+                                          fontSize: 13,
+                                          fontFamily: 'Bold',
+                                        ),
                                       ),
-                                    ),
-                                    DataCell(
-                                      TextWidget(
-                                        text: 'Sample',
-                                        fontSize: 11,
+                                      DataColumn(
+                                        label: TextWidget(
+                                          text: 'Reporter',
+                                          fontSize: 13,
+                                          fontFamily: 'Bold',
+                                        ),
                                       ),
-                                    ),
-                                    DataCell(TextButton(
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              content: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  TextWidget(
-                                                    text: 'Reporter: John Doe',
-                                                    fontSize: 18,
-                                                  ),
-                                                  TextWidget(
-                                                    text: 'Type: Noise',
-                                                    fontSize: 14,
-                                                  ),
-                                                  TextWidget(
-                                                    text:
-                                                        'Description: Lorem Ipsum',
-                                                    fontSize: 14,
-                                                  ),
-                                                  TextWidget(
-                                                    text:
-                                                        'Date and Time: January 01, 2001',
-                                                    fontSize: 14,
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Container(
-                                                    width: double.infinity,
-                                                    height: 250,
-                                                    color: Colors.black,
-                                                  ),
-                                                ],
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: TextWidget(
-                                                    text: 'Close',
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: TextWidget(
-                                                    text: 'Delete',
-                                                    fontSize: 14,
-                                                  ),
-                                                )
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                      child: TextWidget(
-                                        text: 'View ${widget.type} detail',
-                                        fontSize: 11,
+                                      DataColumn(
+                                        label: TextWidget(
+                                            text: 'Details',
+                                            fontSize: 13,
+                                            fontFamily: 'Bold'),
                                       ),
-                                    )),
-                                  ])
-                              ]),
+                                    ], rows: [
+                                      for (int i = 0; i < data.docs.length; i++)
+                                        DataRow(cells: [
+                                          DataCell(
+                                            TextWidget(
+                                              text: '${i + 1}',
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                          DataCell(
+                                            TextWidget(
+                                              text: data.docs[i]['reporter'],
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                          DataCell(TextButton(
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                    content: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        TextWidget(
+                                                          text:
+                                                              'Reporter: ${data.docs[i]['reporter']}',
+                                                          fontSize: 18,
+                                                        ),
+                                                        TextWidget(
+                                                          text:
+                                                              'Type: ${data.docs[i]['type']}',
+                                                          fontSize: 14,
+                                                        ),
+                                                        TextWidget(
+                                                          text:
+                                                              'Description: ${data.docs[i]['desc']}',
+                                                          fontSize: 14,
+                                                        ),
+                                                        TextWidget(
+                                                          text:
+                                                              'Date and Time: ${DateFormat.yMMMd().add_jm().format(data.docs[i]['dateTime'].toDate())}',
+                                                          fontSize: 14,
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Container(
+                                                          width:
+                                                              double.infinity,
+                                                          height: 250,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: TextWidget(
+                                                          text: 'Close',
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () async {
+                                                          await FirebaseFirestore
+                                                              .instance
+                                                              .doc(data
+                                                                  .docs[i].id)
+                                                              .delete();
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: TextWidget(
+                                                          text: 'Delete',
+                                                          fontSize: 14,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: TextWidget(
+                                              text:
+                                                  'View ${widget.type} detail',
+                                              fontSize: 11,
+                                            ),
+                                          )),
+                                        ])
+                                    ]);
+                                  }),
                             ),
                           ),
                         ],
