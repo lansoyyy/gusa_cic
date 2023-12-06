@@ -25,11 +25,19 @@ class AddreportScreen extends StatefulWidget {
 
 class _AddreportScreenState extends State<AddreportScreen> {
   List<String> type1 = [
-    'Environmental',
     'Road',
-    'Noise',
+    'Fire',
+    'Crime',
+    'Others',
   ];
-  String selected = 'Environmental';
+  String selected = 'Road';
+
+  List<String> type2 = [
+    'Dispute',
+    'Noise',
+    'Others',
+  ];
+  String selected1 = 'Dispute';
 
   final descController = TextEditingController();
 
@@ -128,22 +136,16 @@ class _AddreportScreenState extends State<AddreportScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.account_circle,
                         color: Colors.white,
                         size: 48,
                       ),
-                      const SizedBox(
+                      SizedBox(
                         width: 20,
-                      ),
-                      TextWidget(
-                        text: 'John Doe',
-                        fontSize: 18,
-                        fontFamily: 'Bold',
-                        color: Colors.white,
                       ),
                     ],
                   ),
@@ -153,7 +155,7 @@ class _AddreportScreenState extends State<AddreportScreen> {
                   Card(
                     child: Container(
                       width: double.infinity,
-                      height: 450,
+                      height: 520,
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
@@ -170,12 +172,59 @@ class _AddreportScreenState extends State<AddreportScreen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             TextWidget(
-                              text: 'Submit ${widget.type} Report',
+                              text: 'Submit a Report',
                               fontSize: 18,
                               fontFamily: 'Bold',
                             ),
                             const SizedBox(
                               height: 20,
+                            ),
+                            TextWidget(
+                              text: 'Type of Compliant',
+                              fontSize: 14,
+                            ),
+                            Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.black,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: DropdownButton<String>(
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      selected1 = newValue.toString();
+                                    });
+                                  },
+                                  underline: const SizedBox(),
+                                  value: selected1,
+                                  items: type2.map((String item) {
+                                    return DropdownMenuItem<String>(
+                                      value: item,
+                                      child: Center(
+                                        child: SizedBox(
+                                          width: 250,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(5.0),
+                                            child: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontFamily: 'QRegular',
+                                                  fontSize: 14),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                )),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            TextWidget(
+                              text: 'Type of Incident',
+                              fontSize: 14,
                             ),
                             Container(
                                 decoration: BoxDecoration(
@@ -216,6 +265,9 @@ class _AddreportScreenState extends State<AddreportScreen> {
                             const SizedBox(
                               height: 10,
                             ),
+                            const SizedBox(
+                              height: 10,
+                            ),
                             ButtonWidget(
                               color: Colors.white,
                               width: 100,
@@ -240,6 +292,9 @@ class _AddreportScreenState extends State<AddreportScreen> {
                         ),
                       ),
                     ),
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
                   const SizedBox(
                     height: 20,
@@ -273,7 +328,7 @@ class _AddreportScreenState extends State<AddreportScreen> {
                                     selected,
                                     imageURL,
                                     descController.text,
-                                    widget.type);
+                                    selected1);
                                 showToast('Report submitted succesfully!');
                                 Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
