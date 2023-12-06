@@ -1,5 +1,5 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gusa_cic/screens/add_report_page.dart';
 import 'package:gusa_cic/screens/admin/adminhome_screen.dart';
 import 'package:gusa_cic/services/add_announcements.dart';
 import 'package:gusa_cic/utils/colors.dart';
@@ -7,6 +7,10 @@ import 'package:gusa_cic/widgets/button_widget.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
 import 'package:gusa_cic/widgets/textfield_widget.dart';
 import 'package:gusa_cic/widgets/toast_widget.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class AnnouncementScreen extends StatefulWidget {
   String? type;
@@ -19,6 +23,75 @@ class AnnouncementScreen extends StatefulWidget {
 
 class _AnnouncementScreenState extends State<AnnouncementScreen> {
   final descController = TextEditingController();
+
+  late String fileName = '';
+
+  late File imageFile;
+
+  late String imageURL = '';
+
+  Future<void> uploadPicture(String inputSource) async {
+    final picker = ImagePicker();
+    XFile pickedImage;
+    try {
+      pickedImage = (await picker.pickImage(
+          source: inputSource == 'camera'
+              ? ImageSource.camera
+              : ImageSource.gallery,
+          maxWidth: 1920))!;
+
+      fileName = path.basename(pickedImage.path);
+      imageFile = File(pickedImage.path);
+
+      try {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) => const Padding(
+            padding: EdgeInsets.only(left: 30, right: 30),
+            child: AlertDialog(
+                title: Row(
+              children: [
+                CircularProgressIndicator(
+                  color: Colors.black,
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  'Loading . . .',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'QRegular'),
+                ),
+              ],
+            )),
+          ),
+        );
+
+        await firebase_storage.FirebaseStorage.instance
+            .ref('Evidences/$fileName')
+            .putFile(imageFile);
+        imageURL = await firebase_storage.FirebaseStorage.instance
+            .ref('Evidences/$fileName')
+            .getDownloadURL();
+
+        showToast('Image uploaded!');
+
+        Navigator.of(context).pop();
+      } on firebase_storage.FirebaseException catch (error) {
+        if (kDebugMode) {
+          print(error);
+        }
+      }
+    } catch (err) {
+      if (kDebugMode) {
+        print(err);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +139,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Card(
                   child: Container(
-                    height: 320,
+                    height: 375,
                     width: double.infinity,
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
@@ -85,12 +158,26 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           TextWidget(
-                            text: 'Make ${widget.type}',
+                            text: 'Make Announcements',
                             fontSize: 24,
                             color: Colors.black,
                           ),
                           const SizedBox(
                             height: 20,
+                          ),
+                          ButtonWidget(
+                            color: Colors.white,
+                            width: 100,
+                            height: 35,
+                            fontSize: 12,
+                            textColor: Colors.black,
+                            label: 'Upload a photo',
+                            onPressed: () {
+                              uploadPicture('gallery');
+                            },
+                          ),
+                          const SizedBox(
+                            height: 10,
                           ),
                           TextFieldWidget(
                             label: 'Type an announcement...',
@@ -122,7 +209,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                         textColor: Colors.black,
                         label: 'Add',
                         onPressed: () {
-                          addAnnoucements(descController.text);
+                          addAnnoucements(descController.text, imageURL);
                           showToast('Annoucement added succesfully!');
                           Navigator.of(context).pushReplacement(
                               MaterialPageRoute(

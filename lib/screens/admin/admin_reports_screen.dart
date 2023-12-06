@@ -1,10 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gusa_cic/screens/add_report_page.dart';
-import 'package:gusa_cic/utils/colors.dart';
-import 'package:gusa_cic/widgets/button_widget.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
-import 'package:gusa_cic/widgets/textfield_widget.dart';
 import 'package:intl/intl.dart';
 
 class AdminReportsScreen extends StatefulWidget {
@@ -85,7 +81,6 @@ class _AnnouncementScreenState extends State<AdminReportsScreen> {
                               child: StreamBuilder<QuerySnapshot>(
                                   stream: FirebaseFirestore.instance
                                       .collection('Reports')
-                                      .where('categ', isEqualTo: widget.type)
                                       .snapshots(),
                                   builder: (BuildContext context,
                                       AsyncSnapshot<QuerySnapshot> snapshot) {

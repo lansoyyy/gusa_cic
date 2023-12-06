@@ -116,43 +116,59 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('Announcements')
-                          .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasError) {
-                          print(snapshot.error);
-                          return const Center(child: Text('Error'));
-                        }
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Padding(
-                            padding: EdgeInsets.only(top: 50),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.black,
-                              ),
-                            ),
-                          );
-                        }
-
-                        final data = snapshot.requireData;
-                        return Column(
-                          children: [
-                            for (int i = 0; i < data.docs.length; i++)
-                              TextWidget(
-                                text: '- ${data.docs[i]['desc']}',
-                                fontSize: 12,
-                                color: Colors.black,
-                                fontFamily: 'Medium',
-                              ),
-                          ],
-                        );
-                      }),
-                  const SizedBox(
+                  SizedBox(
                     height: 300,
+                    child: StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('Announcements')
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            print(snapshot.error);
+                            return const Center(child: Text('Error'));
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 50),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            );
+                          }
+
+                          final data = snapshot.requireData;
+                          return Column(
+                            children: [
+                              for (int i = 0; i < data.docs.length; i++)
+                                Column(
+                                  children: [
+                                    Container(
+                                      height: 150,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              image: NetworkImage(
+                                                  data.docs[i]['img']),
+                                              fit: BoxFit.cover)),
+                                    ),
+                                    TextWidget(
+                                      text: '- ${data.docs[i]['desc']}',
+                                      fontSize: 12,
+                                      color: Colors.black,
+                                      fontFamily: 'Medium',
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          );
+                        }),
+                  ),
+                  const SizedBox(
+                    height: 100,
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.end,

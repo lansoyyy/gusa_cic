@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
-Future addAnnoucements(desc) async {
+Future addAnnoucements(desc, img) async {
   final docUser = FirebaseFirestore.instance.collection('Announcements').doc();
 
   final json = {
@@ -9,6 +8,7 @@ Future addAnnoucements(desc) async {
     'dateTime': DateTime.now(),
     'status': 'Pending',
     'id': docUser.id,
+    'img': img
   };
 
   await docUser.set(json);

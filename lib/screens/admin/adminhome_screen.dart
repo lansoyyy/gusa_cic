@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gusa_cic/screens/add_report_page.dart';
-import 'package:gusa_cic/screens/admin/admin_reports_screen.dart';
-import 'package:gusa_cic/screens/admin/announcement_screen.dart';
 import 'package:gusa_cic/screens/admin/residents_screen.dart';
-import 'package:gusa_cic/utils/colors.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
 import 'package:intl/intl.dart';
+
+import '../auth/login_screen.dart';
+import 'admin_reports_screen.dart';
+import 'announcement_screen.dart';
 
 class AdminHomeScreen extends StatelessWidget {
   const AdminHomeScreen({super.key});
@@ -29,289 +29,229 @@ class AdminHomeScreen extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Icon(
-                    Icons.account_circle_rounded,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  TextWidget(
-                    text: 'ADMIN',
-                    fontSize: 18,
-                    color: Colors.white,
-                    fontFamily: 'Bold',
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextWidget(
-                    text: 'GUSA - CIC',
-                    fontSize: 16,
-                    color: Colors.white,
-                    fontFamily: 'Bold',
-                  ),
-                  TextWidget(
-                    text: DateFormat.yMMMd().format(DateTime.now()),
-                    fontSize: 16,
-                    color: Colors.white,
-                    fontFamily: 'Bold',
-                  ),
-                ],
-              ),
-              const Divider(
-                color: Colors.white,
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (int i = 0; i < 2; i++)
-                    StreamBuilder<QuerySnapshot>(
-                        stream: i == 0
-                            ? FirebaseFirestore.instance
-                                .collection('Announcements')
-                                .snapshots()
-                            : FirebaseFirestore.instance
-                                .collection('Users')
-                                .snapshots(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.hasError) {
-                            print(snapshot.error);
-                            return const Center(child: Text('Error'));
-                          }
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Padding(
-                              padding: EdgeInsets.only(top: 50),
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.black,
-                                ),
-                              ),
-                            );
-                          }
-
-                          final data = snapshot.requireData;
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 5, right: 5),
-                            child: GestureDetector(
-                              onTap: () {
-                                if (i == 0) {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => AnnouncementScreen(
-                                            type: i == 0
-                                                ? 'Announcements'
-                                                : i == 1
-                                                    ? 'Residents'
-                                                    : 'Concern',
-                                          )));
-                                } else {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => ResidentsScreen(
-                                            type: i == 0
-                                                ? 'Announcements'
-                                                : i == 1
-                                                    ? 'Residents'
-                                                    : 'Concern',
-                                          )));
-                                }
-                              },
-                              child: Container(
-                                height: 175,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10, right: 10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Center(
-                                        child: Container(
-                                          height: 90,
-                                          width: 75,
-                                          decoration: BoxDecoration(
-                                            color: buttonColor,
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                          ),
-                                          child: Center(
-                                            child: Icon(
-                                              i == 0
-                                                  ? Icons.announcement
-                                                  : i == 1
-                                                      ? Icons.group
-                                                      : Icons.diversity_1,
-                                              color: Colors.black,
-                                              size: 48,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 5,
-                                      ),
-                                      TextWidget(
-                                        text: i == 0
-                                            ? 'Announcements'
-                                            : i == 1
-                                                ? 'Residents'
-                                                : 'Concern',
-                                        fontSize: 12,
-                                        color: Colors.black,
-                                      ),
-                                      TextWidget(
-                                        text: data.docs.length.toString(),
-                                        fontSize: 12,
-                                        color: Colors.black,
-                                      ),
-                                    ],
-                                  ),
-                                ),
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Icon(
+                      Icons.account_circle_rounded,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    TextWidget(
+                      text: 'ADMIN',
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontFamily: 'Bold',
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextWidget(
+                      text: 'GUSA - CIC',
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontFamily: 'Bold',
+                    ),
+                    TextWidget(
+                      text: DateFormat.yMMMd().format(DateTime.now()),
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontFamily: 'Bold',
+                    ),
+                  ],
+                ),
+                const Divider(
+                  color: Colors.white,
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextWidget(
+                      text: 'Announcements',
+                      fontSize: 12,
+                      color: Colors.white,
+                      fontFamily: 'Bold',
+                    ),
+                    TextWidget(
+                      text: DateFormat.yMMMd().format(DateTime.now()),
+                      fontSize: 12,
+                      color: Colors.white,
+                      fontFamily: 'Medium',
+                    ),
+                  ],
+                ),
+                const Divider(
+                  color: Colors.black,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  height: 350,
+                  child: StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('Announcements')
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          print(snapshot.error);
+                          return const Center(child: Text('Error'));
+                        }
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Padding(
+                            padding: EdgeInsets.only(top: 50),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.black,
                               ),
                             ),
                           );
-                        }),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (int i = 0; i < 3; i++)
-                    StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection('Reports')
-                            .where('categ',
-                                isEqualTo: i == 0
-                                    ? "Compliants"
-                                    : i == 1
-                                        ? 'Incident'
-                                        : 'Concern')
-                            .snapshots(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.hasError) {
-                            print(snapshot.error);
-                            return const Center(child: Text('Error'));
-                          }
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Padding(
-                              padding: EdgeInsets.only(top: 50),
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.black,
-                                ),
-                              ),
-                            );
-                          }
+                        }
 
-                          final data = snapshot.requireData;
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 5, right: 5),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => AdminReportsScreen(
-                                          type: i == 0
-                                              ? 'Compliants'
-                                              : i == 1
-                                                  ? 'Incident'
-                                                  : 'Concern',
-                                        )));
-                              },
-                              child: Container(
-                                height: 175,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10, right: 10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Center(
-                                        child: Container(
-                                          height: 90,
-                                          width: 75,
-                                          decoration: BoxDecoration(
-                                            color: buttonColor,
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                          ),
-                                          child: Center(
-                                            child: Icon(
-                                              i == 0
-                                                  ? Icons.report
-                                                  : i == 1
-                                                      ? Icons.list
-                                                      : Icons.diversity_1,
-                                              color: Colors.black,
-                                              size: 48,
+                        final data = snapshot.requireData;
+                        return Column(
+                          children: [
+                            for (int i = 0; i < data.docs.length; i++)
+                              Column(
+                                children: [
+                                  Container(
+                                    height: 150,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            image: NetworkImage(
+                                                data.docs[i]['img']),
+                                            fit: BoxFit.cover)),
+                                  ),
+                                  TextWidget(
+                                    text: '- ${data.docs[i]['desc']}',
+                                    fontSize: 12,
+                                    color: Colors.black,
+                                    fontFamily: 'Medium',
+                                  ),
+                                ],
+                              ),
+                          ],
+                        );
+                      }),
+                ),
+                const SizedBox(
+                  height: 100,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => AdminReportsScreen(
+                                        type: 'Concern',
+                                      )));
+                            },
+                            icon: const Icon(
+                              Icons.report,
+                              size: 45,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => AnnouncementScreen()));
+                            },
+                            icon: const Icon(
+                              Icons.announcement,
+                              size: 45,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => ResidentsScreen()));
+                            },
+                            icon: const Icon(
+                              Icons.group,
+                              size: 45,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                        title: const Text(
+                                          'Logout Confirmation',
+                                          style: TextStyle(
+                                              fontFamily: 'Bold',
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        content: const Text(
+                                          'Are you sure you want to Logout?',
+                                          style:
+                                              TextStyle(fontFamily: 'Regular'),
+                                        ),
+                                        actions: <Widget>[
+                                          MaterialButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(true),
+                                            child: const Text(
+                                              'Close',
+                                              style: TextStyle(
+                                                  fontFamily: 'Regular',
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 5,
-                                      ),
-                                      TextWidget(
-                                        text: i == 0
-                                            ? 'Compliants'
-                                            : i == 1
-                                                ? 'Incident'
-                                                : 'Concern',
-                                        fontSize: 12,
-                                        color: Colors.black,
-                                      ),
-                                      TextWidget(
-                                        text: data.docs.length.toString(),
-                                        fontSize: 12,
-                                        color: Colors.black,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                                          MaterialButton(
+                                            onPressed: () async {
+                                              // await FirebaseAuth.instance.signOut();
+                                              Navigator.of(context).pushReplacement(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const LoginScreen()));
+                                            },
+                                            child: const Text(
+                                              'Continue',
+                                              style: TextStyle(
+                                                  fontFamily: 'Regular',
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ],
+                                      ));
+                            },
+                            icon: const Icon(
+                              Icons.logout,
+                              size: 45,
                             ),
-                          );
-                        }),
-                ],
-              ),
-            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
