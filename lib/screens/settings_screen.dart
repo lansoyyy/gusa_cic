@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
 
+import 'myreports_screen.dart';
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -36,6 +38,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                ListTile(
+                  title: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const MyreportsScreen()));
+                    },
+                    child: TextWidget(
+                      text: 'My Reports',
+                      fontSize: 18,
+                      fontFamily: 'Bold',
+                    ),
+                  ),
+                  trailing: const Icon(Icons.arrow_right),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
