@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gusa_cic/screens/profile_screen.dart';
 import 'package:gusa_cic/screens/settings_screen.dart';
@@ -232,7 +233,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                             MaterialButton(
                                               onPressed: () async {
-                                                // await FirebaseAuth.instance.signOut();
+                                                await FirebaseAuth.instance
+                                                    .signOut();
                                                 Navigator.of(context)
                                                     .pushReplacement(
                                                         MaterialPageRoute(

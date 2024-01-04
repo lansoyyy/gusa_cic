@@ -8,6 +8,11 @@ import 'package:gusa_cic/widgets/button_widget.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
 import 'package:gusa_cic/widgets/textfield_widget.dart';
 import 'package:gusa_cic/widgets/toast_widget.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:path/path.dart' as path;
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter/foundation.dart';
+import 'dart:io';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -17,10 +22,95 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<SignupScreen> {
+  String selectedBloodType = 'O+'; // Variable to store the selected blood type
+
+  // List of blood types
+  List<String> bloodTypes = [
+    'O+',
+    'O-',
+    'A+',
+    'A-',
+    'B+',
+    'B-',
+    'AB+',
+    'AB-',
+    'N/A',
+  ];
+  late String fileName = '';
+
+  late File imageFile;
+
+  String selectedGender = '';
+  late String imageURL = '';
+
+  Future<void> uploadPicture(String inputSource) async {
+    final picker = ImagePicker();
+    XFile pickedImage;
+    try {
+      pickedImage = (await picker.pickImage(
+          source: inputSource == 'camera'
+              ? ImageSource.camera
+              : ImageSource.gallery,
+          maxWidth: 1920))!;
+
+      fileName = path.basename(pickedImage.path);
+      imageFile = File(pickedImage.path);
+
+      try {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) => const Padding(
+            padding: EdgeInsets.only(left: 30, right: 30),
+            child: AlertDialog(
+                title: Row(
+              children: [
+                CircularProgressIndicator(
+                  color: Colors.black,
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  'Loading . . .',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'QRegular'),
+                ),
+              ],
+            )),
+          ),
+        );
+
+        await firebase_storage.FirebaseStorage.instance
+            .ref('Users/$fileName')
+            .putFile(imageFile);
+        imageURL = await firebase_storage.FirebaseStorage.instance
+            .ref('Users/$fileName')
+            .getDownloadURL();
+
+        setState(() {});
+
+        Navigator.of(context).pop();
+      } on firebase_storage.FirebaseException catch (error) {
+        if (kDebugMode) {
+          print(error);
+        }
+      }
+    } catch (err) {
+      if (kDebugMode) {
+        print(err);
+      }
+    }
+  }
+
   final firstnameController = TextEditingController();
   final middlenameController = TextEditingController();
   final lastnameController = TextEditingController();
-  final addressController = TextEditingController();
+  final houseController = TextEditingController();
+  final streetController = TextEditingController();
+  final purokController = TextEditingController();
   final phonenumberController = TextEditingController();
   final bloodtypeController = TextEditingController();
   final genderController = TextEditingController();
@@ -52,7 +142,7 @@ class _LoginScreenState extends State<SignupScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
                 child: Card(
                   child: Container(
-                    height: 600,
+                    height: 700,
                     width: double.infinity,
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
@@ -86,10 +176,21 @@ class _LoginScreenState extends State<SignupScreen> {
                             const SizedBox(
                               height: 10,
                             ),
-                            const Icon(
-                              Icons.account_circle,
-                              size: 75,
-                            ),
+                            imageURL == ''
+                                ? GestureDetector(
+                                    onTap: () {
+                                      uploadPicture('camera');
+                                    },
+                                    child: const Icon(
+                                      Icons.account_circle,
+                                      size: 75,
+                                    ),
+                                  )
+                                : CircleAvatar(
+                                    maxRadius: 50,
+                                    minRadius: 50,
+                                    backgroundImage: NetworkImage(imageURL),
+                                  ),
                             const SizedBox(
                               height: 10,
                             ),
@@ -108,10 +209,63 @@ class _LoginScreenState extends State<SignupScreen> {
                               controller: lastnameController,
                               label: 'Last Name',
                             ),
-                            TextFieldWidget(
-                              prefixIcon: Icons.group,
-                              controller: genderController,
-                              label: 'Gender',
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text(
+                              'Select Gender:',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                            RadioListTile<String>(
+                              title: const Text(
+                                'Male',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                              value: 'Male',
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value!;
+                                });
+                              },
+                            ),
+                            RadioListTile<String>(
+                              title: const Text(
+                                'Female',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                              value: 'Female',
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value!;
+                                });
+                              },
+                            ),
+                            RadioListTile<String>(
+                              title: const Text(
+                                'Other',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                              value: 'Other',
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value!;
+                                });
+                              },
                             ),
                             TextFieldWidget(
                               inputType: TextInputType.number,
@@ -119,15 +273,82 @@ class _LoginScreenState extends State<SignupScreen> {
                               controller: phonenumberController,
                               label: 'Mobile number',
                             ),
-                            TextFieldWidget(
-                              prefixIcon: Icons.location_on,
-                              controller: addressController,
-                              label: 'Home Address',
+                            const SizedBox(
+                              height: 10,
                             ),
                             TextFieldWidget(
-                              prefixIcon: Icons.bloodtype,
-                              controller: bloodtypeController,
-                              label: 'Blood Type',
+                              isRequred: false,
+                              prefixIcon: Icons.location_on,
+                              controller: houseController,
+                              label: 'Home Number',
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            TextFieldWidget(
+                              prefixIcon: Icons.location_on,
+                              controller: streetController,
+                              label: 'Street Name',
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            TextFieldWidget(
+                              prefixIcon: Icons.location_on,
+                              controller: purokController,
+                              label: 'Purok',
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text(
+                              'Blood Type:',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.black,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: DropdownButton<String>(
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      selectedBloodType = newValue.toString();
+                                    });
+                                  },
+                                  underline: const SizedBox(),
+                                  value: selectedBloodType,
+                                  items: bloodTypes.map((String item) {
+                                    return DropdownMenuItem<String>(
+                                      value: item,
+                                      child: Center(
+                                        child: SizedBox(
+                                          width: 250,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(5.0),
+                                            child: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontFamily: 'QRegular',
+                                                  fontSize: 14),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                )),
+                            const SizedBox(
+                              height: 10,
                             ),
                             TextFieldWidget(
                               prefixIcon: Icons.email,
@@ -196,6 +417,9 @@ class _LoginScreenState extends State<SignupScreen> {
                                 )
                               ],
                             ),
+                            const SizedBox(
+                              height: 20,
+                            ),
                           ],
                         ),
                       ),
@@ -219,12 +443,13 @@ class _LoginScreenState extends State<SignupScreen> {
           firstnameController.text,
           middlenameController.text,
           lastnameController.text,
-          genderController.text,
+          selectedGender,
           phonenumberController.text,
-          addressController.text,
-          bloodtypeController.text,
+          '${houseController.text}, ${streetController.text}, ${purokController.text}, ',
+          selectedBloodType,
           emailController.text,
-          passwordController.text);
+          passwordController.text,
+          imageURL);
 
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);

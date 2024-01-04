@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gusa_cic/screens/auth/login_screen.dart';
 import 'package:gusa_cic/utils/colors.dart';
@@ -152,7 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                               MaterialButton(
                                 onPressed: () async {
-                                  // await FirebaseAuth.instance.signOut();
+                                  await FirebaseAuth.instance.signOut();
                                   Navigator.of(context).pushReplacement(
                                       MaterialPageRoute(
                                           builder: (context) =>
