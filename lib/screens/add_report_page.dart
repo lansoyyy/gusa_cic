@@ -24,20 +24,12 @@ class AddreportScreen extends StatefulWidget {
 }
 
 class _AddreportScreenState extends State<AddreportScreen> {
-  List<String> type1 = [
-    'Road',
-    'Fire',
-    'Crime',
-    'Others',
-  ];
-  String selected = 'Road';
-
   List<String> type2 = [
-    'Dispute',
-    'Noise',
-    'Others',
+    'Compliant',
+    'Incident',
+    'Concern',
   ];
-  String selected1 = 'Dispute';
+  String selected1 = 'Compliant';
 
   final descController = TextEditingController();
 
@@ -95,6 +87,8 @@ class _AddreportScreenState extends State<AddreportScreen> {
             .getDownloadURL();
 
         showToast('Image uploaded!');
+
+        setState(() {});
 
         Navigator.of(context).pop();
       } on firebase_storage.FirebaseException catch (error) {
@@ -179,10 +173,6 @@ class _AddreportScreenState extends State<AddreportScreen> {
                             const SizedBox(
                               height: 20,
                             ),
-                            TextWidget(
-                              text: 'Type of Compliant',
-                              fontSize: 14,
-                            ),
                             Container(
                                 decoration: BoxDecoration(
                                     color: Colors.white,
@@ -222,49 +212,15 @@ class _AddreportScreenState extends State<AddreportScreen> {
                             const SizedBox(
                               height: 10,
                             ),
-                            TextWidget(
-                              text: 'Type of Incident',
-                              fontSize: 14,
-                            ),
-                            Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: Colors.black,
-                                    ),
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: DropdownButton<String>(
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      selected = newValue.toString();
-                                    });
-                                  },
-                                  underline: const SizedBox(),
-                                  value: selected,
-                                  items: type1.map((String item) {
-                                    return DropdownMenuItem<String>(
-                                      value: item,
-                                      child: Center(
-                                        child: SizedBox(
-                                          width: 250,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(5.0),
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontFamily: 'QRegular',
-                                                  fontSize: 14),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                )),
-                            const SizedBox(
-                              height: 10,
-                            ),
+                            imageURL != ''
+                                ? Container(
+                                    width: 250,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            image: NetworkImage(imageURL))),
+                                  )
+                                : const SizedBox(),
                             const SizedBox(
                               height: 10,
                             ),
@@ -325,7 +281,7 @@ class _AddreportScreenState extends State<AddreportScreen> {
                               onPressed: () {
                                 addReport(
                                     '${data['lname']}, ${data['fname']} ${data['mname'][0]}.',
-                                    selected,
+                                    '',
                                     imageURL,
                                     descController.text,
                                     selected1);
