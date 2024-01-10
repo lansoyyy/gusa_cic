@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gusa_cic/screens/admin/adminhome_screen.dart';
@@ -208,9 +209,17 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                         color: buttonColor,
                         textColor: Colors.black,
                         label: 'Add',
-                        onPressed: () {
-                          addAnnoucements(descController.text, imageURL);
-                          showToast('Annoucement added succesfully!');
+                        onPressed: () async {
+                          await FirebaseFirestore.instance
+                              .collection('Announcements')
+                              .doc('SeHMRpK0GktE0iM3dPGD')
+                              .update({
+                            'desc': descController.text,
+                            'img': imageURL
+                          });
+
+                          // addAnnoucements(descController.text, imageURL);
+                          showToast('Annoucement updated succesfully!');
                           Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
                                   builder: (context) =>

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gusa_cic/screens/admin/residents_screen.dart';
+import 'package:gusa_cic/utils/colors.dart';
+import 'package:gusa_cic/widgets/button_widget.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
 import 'package:intl/intl.dart';
 
@@ -72,85 +74,183 @@ class AdminHomeScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(
+                  height: 10,
+                ),
                 const Divider(
                   color: Colors.white,
                 ),
                 const SizedBox(
-                  height: 50,
+                  height: 10,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextWidget(
-                      text: 'Announcements',
-                      fontSize: 12,
-                      color: Colors.white,
-                      fontFamily: 'Bold',
-                    ),
-                    TextWidget(
-                      text: DateFormat.yMMMd().format(DateTime.now()),
-                      fontSize: 12,
-                      color: Colors.white,
-                      fontFamily: 'Medium',
-                    ),
-                  ],
-                ),
-                const Divider(
-                  color: Colors.black,
+                TextWidget(
+                  text: 'Reports',
+                  fontSize: 18,
+                  fontFamily: 'Bold',
+                  color: Colors.white,
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                SizedBox(
-                  height: 350,
-                  child: StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('Announcements')
-                          .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasError) {
-                          print(snapshot.error);
-                          return const Center(child: Text('Error'));
-                        }
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Padding(
-                            padding: EdgeInsets.only(top: 50),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.black,
-                              ),
-                            ),
-                          );
-                        }
+                Card(
+                  child: SizedBox(
+                      height: 335,
+                      child: SingleChildScrollView(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('Reports')
+                                  .snapshots(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                                if (snapshot.hasError) {
+                                  print(snapshot.error);
+                                  return const Center(child: Text('Error'));
+                                }
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Padding(
+                                    padding: EdgeInsets.only(top: 50),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  );
+                                }
 
-                        final data = snapshot.requireData;
-                        return Column(
-                          children: [
-                            for (int i = 0; i < data.docs.length; i++)
-                              Column(
-                                children: [
-                                  Container(
-                                    height: 150,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            image: NetworkImage(
-                                                data.docs[i]['img']),
-                                            fit: BoxFit.cover)),
+                                final data = snapshot.requireData;
+                                return DataTable(columns: [
+                                  DataColumn(
+                                    label: TextWidget(
+                                      text: 'Reports',
+                                      fontSize: 13,
+                                      fontFamily: 'Bold',
+                                    ),
                                   ),
-                                  TextWidget(
-                                    text: '- ${data.docs[i]['desc']}',
-                                    fontSize: 12,
-                                    color: Colors.black,
-                                    fontFamily: 'Medium',
+                                  DataColumn(
+                                    label: TextWidget(
+                                        text: 'Type',
+                                        fontSize: 13,
+                                        fontFamily: 'Bold'),
                                   ),
-                                ],
-                              ),
-                          ],
-                        );
-                      }),
+                                  DataColumn(
+                                    label: TextWidget(
+                                        text: 'Details',
+                                        fontSize: 13,
+                                        fontFamily: 'Bold'),
+                                  ),
+                                  DataColumn(
+                                    label: TextWidget(
+                                      text: '',
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ], rows: [
+                                  for (int i = 0; i < data.docs.length; i++)
+                                    DataRow(cells: [
+                                      DataCell(
+                                        TextWidget(
+                                          text: data.docs[i]['type'],
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                      DataCell(
+                                        TextWidget(
+                                          text: data.docs[i]['categ'],
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                      DataCell(
+                                        TextWidget(
+                                          text: data.docs[i]['desc'],
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                      DataCell(
+                                        GestureDetector(
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return Dialog(
+                                                  backgroundColor: primary,
+                                                  child: SizedBox(
+                                                    height: 125,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10.0),
+                                                      child: Column(
+                                                        children: [
+                                                          TextWidget(
+                                                            text:
+                                                                'Are you sure you want to delete this report?',
+                                                            fontSize: 14,
+                                                            fontFamily: 'Bold',
+                                                            color: Colors.black,
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceEvenly,
+                                                            children: [
+                                                              ButtonWidget(
+                                                                color:
+                                                                    buttonColor,
+                                                                width: 100,
+                                                                height: 40,
+                                                                radius: 5,
+                                                                label: 'Ok',
+                                                                onPressed:
+                                                                    () async {
+                                                                  await FirebaseFirestore
+                                                                      .instance
+                                                                      .doc(data
+                                                                          .docs[
+                                                                              i]
+                                                                          .id)
+                                                                      .delete();
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                              ),
+                                                              ButtonWidget(
+                                                                color:
+                                                                    buttonColor,
+                                                                width: 100,
+                                                                height: 40,
+                                                                radius: 5,
+                                                                label: 'Cancel',
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: const Icon(
+                                            Icons.delete,
+                                          ),
+                                        ),
+                                      ),
+                                    ])
+                                ]);
+                              }),
+                        ),
+                      )),
                 ),
                 const SizedBox(
                   height: 100,
