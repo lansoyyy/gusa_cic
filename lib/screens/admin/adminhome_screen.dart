@@ -77,8 +77,11 @@ class AdminHomeScreen extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                const Divider(
-                  color: Colors.white,
+                const SizedBox(
+                  height: 5,
+                  child: Divider(
+                    color: Colors.black,
+                  ),
                 ),
                 const SizedBox(
                   height: 10,
@@ -94,7 +97,7 @@ class AdminHomeScreen extends StatelessWidget {
                 ),
                 Card(
                   child: SizedBox(
-                      height: 335,
+                      height: 350,
                       child: SingleChildScrollView(
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
@@ -121,133 +124,275 @@ class AdminHomeScreen extends StatelessWidget {
                                 }
 
                                 final data = snapshot.requireData;
-                                return DataTable(columns: [
-                                  DataColumn(
-                                    label: TextWidget(
-                                      text: 'Reports',
-                                      fontSize: 13,
-                                      fontFamily: 'Bold',
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: TextWidget(
-                                        text: 'Type',
-                                        fontSize: 13,
-                                        fontFamily: 'Bold'),
-                                  ),
-                                  DataColumn(
-                                    label: TextWidget(
-                                        text: 'Details',
-                                        fontSize: 13,
-                                        fontFamily: 'Bold'),
-                                  ),
-                                  DataColumn(
-                                    label: TextWidget(
-                                      text: '',
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ], rows: [
-                                  for (int i = 0; i < data.docs.length; i++)
-                                    DataRow(cells: [
-                                      DataCell(
-                                        TextWidget(
-                                          text: data.docs[i]['type'],
-                                          fontSize: 11,
+                                return DataTable(
+                                    headingRowColor: MaterialStateProperty.all(
+                                        Colors.blue[300]),
+                                    border: TableBorder.all(color: Colors.grey),
+                                    columns: [
+                                      DataColumn(
+                                        label: TextWidget(
+                                          text: 'Reporter',
+                                          fontSize: 13,
+                                          fontFamily: 'Bold',
                                         ),
                                       ),
-                                      DataCell(
-                                        TextWidget(
-                                          text: data.docs[i]['categ'],
-                                          fontSize: 11,
+                                      DataColumn(
+                                        label: TextWidget(
+                                            text: 'Report',
+                                            fontSize: 13,
+                                            fontFamily: 'Bold'),
+                                      ),
+                                      DataColumn(
+                                        label: TextWidget(
+                                            text: 'Details',
+                                            fontSize: 13,
+                                            fontFamily: 'Bold'),
+                                      ),
+                                      DataColumn(
+                                        label: TextWidget(
+                                          text: '',
+                                          fontSize: 13,
                                         ),
                                       ),
-                                      DataCell(
-                                        TextWidget(
-                                          text: data.docs[i]['desc'],
-                                          fontSize: 11,
-                                        ),
-                                      ),
-                                      DataCell(
-                                        GestureDetector(
-                                          onTap: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return Dialog(
-                                                  backgroundColor: primary,
-                                                  child: SizedBox(
-                                                    height: 125,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              10.0),
-                                                      child: Column(
-                                                        children: [
-                                                          TextWidget(
-                                                            text:
-                                                                'Are you sure you want to delete this report?',
-                                                            fontSize: 14,
-                                                            fontFamily: 'Bold',
-                                                            color: Colors.black,
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 20,
-                                                          ),
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceEvenly,
-                                                            children: [
-                                                              ButtonWidget(
-                                                                color:
-                                                                    buttonColor,
-                                                                width: 100,
-                                                                height: 40,
-                                                                radius: 5,
-                                                                label: 'Ok',
-                                                                onPressed:
-                                                                    () async {
-                                                                  await FirebaseFirestore
-                                                                      .instance
-                                                                      .doc(data
-                                                                          .docs[
-                                                                              i]
-                                                                          .id)
-                                                                      .delete();
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                              ),
-                                                              ButtonWidget(
-                                                                color:
-                                                                    buttonColor,
-                                                                width: 100,
-                                                                height: 40,
-                                                                radius: 5,
-                                                                label: 'Cancel',
-                                                                onPressed: () {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          },
-                                          child: const Icon(
-                                            Icons.delete,
+                                    ],
+                                    rows: [
+                                      for (int i = 0; i < data.docs.length; i++)
+                                        DataRow(cells: [
+                                          DataCell(
+                                            TextWidget(
+                                              text: data.docs[i]['reporter'],
+                                              fontSize: 11,
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    ])
-                                ]);
+                                          DataCell(
+                                            TextWidget(
+                                              text: data.docs[i]['type'],
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                          DataCell(
+                                            Row(
+                                              children: [
+                                                Image.network(
+                                                  data.docs[i]['img'],
+                                                  height: 100,
+                                                  width: 100,
+                                                ),
+                                                TextWidget(
+                                                  text: data.docs[i]['desc'],
+                                                  fontSize: 11,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          DataCell(
+                                            Row(
+                                              children: [
+                                                ButtonWidget(
+                                                  radius: 0,
+                                                  width: 75,
+                                                  height: 30,
+                                                  fontSize: 11,
+                                                  color: data.docs[i]
+                                                              ['status'] ==
+                                                          'Pending'
+                                                      ? Colors.grey
+                                                      : data.docs[i]
+                                                                  ['status'] ==
+                                                              'Ongoing'
+                                                          ? Colors.yellow
+                                                          : Colors.green,
+                                                  label: data.docs[i]['status'],
+                                                  onPressed: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return Dialog(
+                                                          backgroundColor:
+                                                              primary,
+                                                          child: SizedBox(
+                                                            height: 250,
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(
+                                                                      10.0),
+                                                              child: Column(
+                                                                children: [
+                                                                  TextWidget(
+                                                                    text:
+                                                                        'Mark as:',
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontFamily:
+                                                                        'Bold',
+                                                                    color: Colors
+                                                                        .black,
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    height: 20,
+                                                                  ),
+                                                                  Column(
+                                                                    children: [
+                                                                      data.docs[i]['status'] ==
+                                                                              'Pending'
+                                                                          ? const SizedBox()
+                                                                          : ButtonWidget(
+                                                                              color: buttonColor,
+                                                                              width: 100,
+                                                                              height: 40,
+                                                                              radius: 5,
+                                                                              label: 'Pending',
+                                                                              onPressed: () async {
+                                                                                await FirebaseFirestore.instance.collection('Reports').doc(data.docs[i].id).update({
+                                                                                  'status': 'Pending'
+                                                                                });
+                                                                                Navigator.pop(context);
+                                                                              },
+                                                                            ),
+                                                                      const SizedBox(
+                                                                        height:
+                                                                            10,
+                                                                      ),
+                                                                      data.docs[i]['status'] ==
+                                                                              'Ongoing'
+                                                                          ? const SizedBox()
+                                                                          : ButtonWidget(
+                                                                              color: buttonColor,
+                                                                              width: 100,
+                                                                              height: 40,
+                                                                              radius: 5,
+                                                                              label: 'Ongoing',
+                                                                              onPressed: () async {
+                                                                                await FirebaseFirestore.instance.collection('Reports').doc(data.docs[i].id).update({
+                                                                                  'status': 'Ongoing'
+                                                                                });
+                                                                                Navigator.pop(context);
+                                                                              },
+                                                                            ),
+                                                                      const SizedBox(
+                                                                        height:
+                                                                            10,
+                                                                      ),
+                                                                      data.docs[i]['status'] ==
+                                                                              'Resolved'
+                                                                          ? const SizedBox()
+                                                                          : ButtonWidget(
+                                                                              color: buttonColor,
+                                                                              width: 100,
+                                                                              height: 40,
+                                                                              radius: 5,
+                                                                              label: 'Resolved',
+                                                                              onPressed: () async {
+                                                                                await FirebaseFirestore.instance.collection('Reports').doc(data.docs[i].id).update({
+                                                                                  'status': 'Resolved'
+                                                                                });
+                                                                                Navigator.pop(context);
+                                                                              },
+                                                                            ),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                ),
+                                                // GestureDetector(
+                                                //   onTap: () {
+                                                //     showDialog(
+                                                //       context: context,
+                                                //       builder: (context) {
+                                                //         return Dialog(
+                                                //           backgroundColor:
+                                                //               primary,
+                                                //           child: SizedBox(
+                                                //             height: 125,
+                                                //             child: Padding(
+                                                //               padding:
+                                                //                   const EdgeInsets
+                                                //                       .all(
+                                                //                       10.0),
+                                                //               child: Column(
+                                                //                 children: [
+                                                //                   TextWidget(
+                                                //                     text:
+                                                //                         'Are you sure you want to delete this report?',
+                                                //                     fontSize:
+                                                //                         14,
+                                                //                     fontFamily:
+                                                //                         'Bold',
+                                                //                     color: Colors
+                                                //                         .black,
+                                                //                   ),
+                                                //                   const SizedBox(
+                                                //                     height: 20,
+                                                //                   ),
+                                                //                   Row(
+                                                //                     mainAxisAlignment:
+                                                //                         MainAxisAlignment
+                                                //                             .spaceEvenly,
+                                                //                     children: [
+                                                //                       ButtonWidget(
+                                                //                         color:
+                                                //                             buttonColor,
+                                                //                         width:
+                                                //                             100,
+                                                //                         height:
+                                                //                             40,
+                                                //                         radius:
+                                                //                             5,
+                                                //                         label:
+                                                //                             'Ok',
+                                                //                         onPressed:
+                                                //                             () async {
+                                                //                           await FirebaseFirestore
+                                                //                               .instance
+                                                //                               .doc(data.docs[i].id)
+                                                //                               .delete();
+                                                //                           Navigator.pop(
+                                                //                               context);
+                                                //                         },
+                                                //                       ),
+                                                //                       ButtonWidget(
+                                                //                         color:
+                                                //                             buttonColor,
+                                                //                         width:
+                                                //                             100,
+                                                //                         height:
+                                                //                             40,
+                                                //                         radius:
+                                                //                             5,
+                                                //                         label:
+                                                //                             'Cancel',
+                                                //                         onPressed:
+                                                //                             () {
+                                                //                           Navigator.pop(
+                                                //                               context);
+                                                //                         },
+                                                //                       ),
+                                                //                     ],
+                                                //                   ),
+                                                //                 ],
+                                                //               ),
+                                                //             ),
+                                                //           ),
+                                                //         );
+                                                //       },
+                                                //     );
+                                                //   },
+                                                //   child: const Icon(
+                                                //     Icons.delete,
+                                                //   ),
+                                                // ),
+                                              ],
+                                            ),
+                                          ),
+                                        ])
+                                    ]);
                               }),
                         ),
                       )),
