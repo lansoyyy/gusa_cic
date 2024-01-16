@@ -9,6 +9,7 @@ import 'package:gusa_cic/widgets/text_widget.dart';
 import 'package:gusa_cic/widgets/textfield_widget.dart';
 import 'package:gusa_cic/widgets/toast_widget.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -118,6 +119,8 @@ class _LoginScreenState extends State<SignupScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmpasswordController = TextEditingController();
+
+  var dateController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -301,6 +304,117 @@ class _LoginScreenState extends State<SignupScreen> {
                             const SizedBox(
                               height: 10,
                             ),
+                            Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  RichText(
+                                    text: const TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: 'Birthday',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Bold',
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: '*',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Bold',
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      dateFromPicker(context);
+                                    },
+                                    child: SizedBox(
+                                      width: 325,
+                                      height: 50,
+                                      child: TextFormField(
+                                        enabled: false,
+                                        style: TextStyle(
+                                          fontFamily: 'Regular',
+                                          fontSize: 14,
+                                          color: primary,
+                                        ),
+
+                                        decoration: InputDecoration(
+                                          fillColor: Colors.white,
+                                          filled: true,
+                                          prefixIcon: const Icon(
+                                            Icons.calendar_month_outlined,
+                                            color: Colors.grey,
+                                          ),
+                                          hintStyle: const TextStyle(
+                                            fontFamily: 'Regular',
+                                            fontSize: 14,
+                                            color: Colors.grey,
+                                          ),
+                                          hintText: dateController.text,
+                                          border: InputBorder.none,
+                                          disabledBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                              color: Colors.grey,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                              color: Colors.grey,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                              color: Colors.grey,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                          ),
+                                          errorBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                          ),
+                                          errorStyle: const TextStyle(
+                                              fontFamily: 'Bold', fontSize: 12),
+                                          focusedErrorBorder:
+                                              OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                          ),
+                                        ),
+
+                                        controller: dateController,
+                                        // Pass the validator to the TextFormField
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
                             const Text(
                               'Blood Type:',
                               style: TextStyle(
@@ -434,6 +548,36 @@ class _LoginScreenState extends State<SignupScreen> {
     );
   }
 
+  void dateFromPicker(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+        builder: (context, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: ColorScheme.light(
+                primary: primary,
+                onPrimary: Colors.white,
+                onSurface: Colors.grey,
+              ),
+            ),
+            child: child!,
+          );
+        },
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1900),
+        lastDate: DateTime(2050));
+
+    if (pickedDate != null) {
+      String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+
+      setState(() {
+        dateController.text = formattedDate;
+      });
+    } else {
+      return null;
+    }
+  }
+
   register(context) async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -449,7 +593,8 @@ class _LoginScreenState extends State<SignupScreen> {
           selectedBloodType,
           emailController.text,
           passwordController.text,
-          imageURL);
+          imageURL,
+          dateController.text);
 
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
