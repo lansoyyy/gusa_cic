@@ -204,20 +204,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                       return DataTable(columns: [
                                         DataColumn(
                                           label: TextWidget(
-                                            text: 'Reports',
-                                            fontSize: 13,
-                                            fontFamily: 'Bold',
-                                          ),
-                                        ),
-                                        DataColumn(
-                                          label: TextWidget(
-                                              text: 'Type',
+                                              text: 'Reports',
                                               fontSize: 13,
                                               fontFamily: 'Bold'),
                                         ),
                                         DataColumn(
                                           label: TextWidget(
                                               text: 'Details',
+                                              fontSize: 13,
+                                              fontFamily: 'Bold'),
+                                        ),
+                                        DataColumn(
+                                          label: TextWidget(
+                                              text: 'Status',
                                               fontSize: 13,
                                               fontFamily: 'Bold'),
                                         ),
@@ -234,12 +233,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           DataRow(cells: [
                                             DataCell(
                                               TextWidget(
-                                                text: data.docs[i]['type'],
-                                                fontSize: 11,
-                                              ),
-                                            ),
-                                            DataCell(
-                                              TextWidget(
                                                 text: data.docs[i]['categ'],
                                                 fontSize: 11,
                                               ),
@@ -247,6 +240,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                             DataCell(
                                               TextWidget(
                                                 text: data.docs[i]['desc'],
+                                                fontSize: 11,
+                                              ),
+                                            ),
+                                            DataCell(
+                                              TextWidget(
+                                                text: data.docs[i]['status'],
                                                 fontSize: 11,
                                               ),
                                             ),

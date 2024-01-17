@@ -7,6 +7,7 @@ import 'package:gusa_cic/widgets/button_widget.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
 import 'package:gusa_cic/widgets/textfield_widget.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:gusa_cic/widgets/toast_widget.dart';
 import 'package:path/path.dart' as path;
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -130,6 +131,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               return const SizedBox();
             }
             dynamic data = snapshot.data;
+
+            phonenumberController.text = data['mobilenumber'];
+            addressController.text = data['address'];
+            bloodtypeController.text = data['bloodtype'];
+
+            emailController.text = data['email'];
+
             return Padding(
               padding: const EdgeInsets.fromLTRB(20, 30, 20, 30),
               child: SingleChildScrollView(
@@ -144,13 +152,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           },
                           icon: const Icon(
                             Icons.arrow_back,
+                            color: Colors.white,
                           ),
                         ),
                         TextWidget(
                           text: 'My Profile',
                           fontSize: 18,
                           fontFamily: 'Bold',
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ],
                     ),
@@ -207,16 +216,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       label: 'Blood Type',
                     ),
                     TextFieldWidget(
+                      isEnabled: false,
                       prefixIcon: Icons.email,
                       controller: emailController,
                       label: 'Email',
                     ),
-                    TextFieldWidget(
-                      isObscure: true,
-                      showEye: true,
-                      prefixIcon: Icons.lock,
-                      controller: passwordController,
-                      label: 'Password',
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ButtonWidget(
+                      radius: 10,
+                      color: buttonColor,
+                      label: 'Edit Profile',
+                      onPressed: () async {
+                        await FirebaseFirestore.instance
+                            .collection('Users')
+                            .doc(data.id)
+                            .update({
+                          'mobilenumber': phonenumberController.text,
+                          'address': addressController.text,
+                          'bloodtype': bloodtypeController.text,
+                        });
+
+                        showToast('Saved succesfully!');
+                      },
                     ),
                     const SizedBox(
                       height: 20,
