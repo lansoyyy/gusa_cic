@@ -215,7 +215,7 @@ class AdminHomeScreen extends StatelessWidget {
                                                             child: Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                      .all(
+                                                                          .all(
                                                                       10.0),
                                                               child: Column(
                                                                 children: [
