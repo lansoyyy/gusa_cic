@@ -149,7 +149,7 @@ class _AddreportScreenState extends State<AddreportScreen> {
                   Card(
                     child: Container(
                       width: double.infinity,
-                      height: 520,
+                      height: 450,
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
@@ -165,10 +165,26 @@ class _AddreportScreenState extends State<AddreportScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            TextWidget(
-                              text: 'Submit a Report',
-                              fontSize: 18,
-                              fontFamily: 'Bold',
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                const SizedBox(
+                                  width: 50,
+                                ),
+                                TextWidget(
+                                  text: 'Submit a Report',
+                                  fontSize: 18,
+                                  fontFamily: 'Bold',
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: const Icon(
+                                    Icons.close,
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(
                               height: 20,
