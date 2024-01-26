@@ -360,6 +360,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         });
 
                         showToast('Saved succesfully!');
+                        Navigator.pop(context);
                       },
                     ),
                     const SizedBox(

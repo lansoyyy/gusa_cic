@@ -25,11 +25,11 @@ class AddreportScreen extends StatefulWidget {
 
 class _AddreportScreenState extends State<AddreportScreen> {
   List<String> type2 = [
-    'Complaint',
+    'Compliant',
     'Incident',
     'Concern',
   ];
-  String selected1 = 'Complaint';
+  String selected1 = 'Compliant';
 
   final descController = TextEditingController();
 
