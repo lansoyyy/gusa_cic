@@ -86,6 +86,12 @@ class AdminHomeScreen extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
+                Image.asset(
+                  'assets/images/image 26.png',
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
                 TextWidget(
                   text: 'Reports',
                   fontSize: 18,
@@ -97,13 +103,14 @@ class AdminHomeScreen extends StatelessWidget {
                 ),
                 Card(
                   child: SizedBox(
-                      height: 350,
+                      height: 325,
                       child: SingleChildScrollView(
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: StreamBuilder<QuerySnapshot>(
                               stream: FirebaseFirestore.instance
                                   .collection('Reports')
+                                  .orderBy('dateTime', descending: true)
                                   .snapshots(),
                               builder: (BuildContext context,
                                   AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -159,30 +166,33 @@ class AdminHomeScreen extends StatelessWidget {
                                       for (int i = 0; i < data.docs.length; i++)
                                         DataRow(cells: [
                                           DataCell(
-                                            TextWidget(
-                                              text: data.docs[i]['reporter'],
-                                              fontSize: 11,
+                                            GestureDetector(
+                                              onTap: () {
+                                                showpersondetail(context,
+                                                    data.docs[i]['uid']);
+                                              },
+                                              child: TextWidget(
+                                                text: data.docs[i]['reporter'],
+                                                fontSize: 11,
+                                              ),
                                             ),
                                           ),
                                           DataCell(
                                             TextWidget(
-                                              text: data.docs[i]['type'],
+                                              text: data.docs[i]['categ'],
                                               fontSize: 11,
                                             ),
                                           ),
                                           DataCell(
-                                            Row(
-                                              children: [
-                                                Image.network(
-                                                  data.docs[i]['img'],
-                                                  height: 100,
-                                                  width: 100,
-                                                ),
-                                                TextWidget(
-                                                  text: data.docs[i]['desc'],
-                                                  fontSize: 11,
-                                                ),
-                                              ],
+                                            GestureDetector(
+                                              onTap: () {
+                                                showreportdetails(
+                                                    context, data.docs[i]);
+                                              },
+                                              child: TextWidget(
+                                                text: 'View Report',
+                                                fontSize: 11,
+                                              ),
                                             ),
                                           ),
                                           DataCell(
@@ -398,7 +408,7 @@ class AdminHomeScreen extends StatelessWidget {
                       )),
                 ),
                 const SizedBox(
-                  height: 100,
+                  height: 50,
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -499,6 +509,192 @@ class AdminHomeScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  showpersondetail(context, String id) {
+    final Stream<DocumentSnapshot> userData =
+        FirebaseFirestore.instance.collection('Users').doc(id).snapshots();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: StreamBuilder<DocumentSnapshot>(
+              stream: userData,
+              builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (!snapshot.hasData) {
+                  return const SizedBox();
+                } else if (snapshot.hasError) {
+                  return const Center(child: Text('Something went wrong'));
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return const SizedBox();
+                }
+                dynamic data = snapshot.data;
+                return SizedBox(
+                  height: 300,
+                  width: 300,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextWidget(
+                          text: "RESIDENT'S DETAILS",
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontFamily: 'Bold',
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        CircleAvatar(
+                          minRadius: 35,
+                          maxRadius: 35,
+                          backgroundImage: NetworkImage(data['profilePicture']),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        TextWidget(
+                          text: 'Name: ${data['fname']}  ${data['lname']}',
+                          fontSize: 14,
+                          fontFamily: 'Medium',
+                          color: Colors.black,
+                        ),
+                        // const SizedBox(
+                        //   height: 5,
+                        // ),
+                        // TextWidget(
+                        //   text: 'Birthday: ${data['bday'] ?? ''}',
+                        //   fontSize: 14,
+                        //   fontFamily: 'Medium',
+                        //   color: Colors.black,
+                        // ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        TextWidget(
+                          text: 'Gender: ${data['gender']}',
+                          fontSize: 14,
+                          fontFamily: 'Medium',
+                          color: Colors.black,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        TextWidget(
+                          text: 'Address: ${data['address']}',
+                          fontSize: 14,
+                          fontFamily: 'Medium',
+                          color: Colors.black,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        TextWidget(
+                          text: 'Contact Number: ${data['mobilenumber']}',
+                          fontSize: 14,
+                          fontFamily: 'Medium',
+                          color: Colors.black,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        TextWidget(
+                          text: 'Bloodtype: ${data['bloodtype']}',
+                          fontSize: 14,
+                          fontFamily: 'Medium',
+                          color: Colors.black,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        TextWidget(
+                          text: 'Email: ${data['email']}',
+                          fontSize: 14,
+                          fontFamily: 'Medium',
+                          color: Colors.black,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+        );
+      },
+    );
+  }
+
+  showreportdetails(context, data) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: SizedBox(
+            height: 400,
+            width: 300,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextWidget(
+                      text: 'Reporter: ${data['reporter']}',
+                      fontSize: 14,
+                      fontFamily: 'Medium',
+                      color: Colors.black,
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    TextWidget(
+                      text: 'Report: ${data['categ']}',
+                      fontSize: 14,
+                      fontFamily: 'Medium',
+                      color: Colors.black,
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    TextWidget(
+                      text:
+                          'Date and Time: ${DateFormat.yMMMd().add_jm().format(data['dateTime'].toDate())}',
+                      fontSize: 14,
+                      fontFamily: 'Medium',
+                      color: Colors.black,
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    TextWidget(
+                      text: 'Details: ${data['desc']}',
+                      fontSize: 14,
+                      fontFamily: 'Medium',
+                      color: Colors.black,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      width: 250,
+                      height: 250,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            data['img'],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
