@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:gusa_cic/screens/auth/login_screen.dart';
 import 'package:gusa_cic/utils/colors.dart';
 import 'package:gusa_cic/widgets/button_widget.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
 import 'package:gusa_cic/widgets/textfield_widget.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:gusa_cic/widgets/toast_widget.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -33,6 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   late File imageFile;
 
+  var dateController = TextEditingController();
   late String imageURL = '';
 
   Future<void> uploadPicture(String inputSource) async {
@@ -138,6 +139,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             emailController.text = data['email'];
 
+            dateController.text = data['bday'];
+
             return Padding(
               padding: const EdgeInsets.fromLTRB(20, 30, 20, 30),
               child: SingleChildScrollView(
@@ -188,8 +191,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TextWidget(
+                              text: data['fname'] + ' ' + data['lname'],
+                              fontSize: 18,
+                              fontFamily: 'Bold',
+                              color: Colors.white,
+                            ),
+                            TextWidget(
+                              text: data['email'],
+                              fontSize: 12,
+                              fontFamily: 'Regular',
+                              color: Colors.black,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            TextWidget(
                               text: 'Barangay Resident',
-                              fontSize: 14,
+                              fontSize: 12,
                               fontFamily: 'Medium',
                               color: Colors.white,
                             ),
@@ -221,13 +239,116 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       controller: emailController,
                       label: 'Email',
                     ),
+                    Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: const TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'Birthday',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'Bold',
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: '*',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'Bold',
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              dateFromPicker(context);
+                            },
+                            child: SizedBox(
+                              width: 325,
+                              height: 50,
+                              child: TextFormField(
+                                enabled: false,
+                                style: const TextStyle(
+                                  fontFamily: 'Regular',
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                ),
+
+                                decoration: InputDecoration(
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  prefixIcon: const Icon(
+                                    Icons.calendar_month_outlined,
+                                    color: Colors.grey,
+                                  ),
+                                  hintStyle: const TextStyle(
+                                    fontFamily: 'Regular',
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                  hintText: dateController.text,
+                                  border: InputBorder.none,
+                                  disabledBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                      color: Colors.grey,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                      color: Colors.grey,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                      color: Colors.grey,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                      color: Colors.red,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  errorStyle: const TextStyle(
+                                      fontFamily: 'Bold', fontSize: 12),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                      color: Colors.red,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+
+                                controller: dateController,
+                                // Pass the validator to the TextFormField
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(
-                      height: 20,
+                      height: 30,
                     ),
                     ButtonWidget(
-                      radius: 10,
+                      width: 200,
+                      radius: 20,
                       color: buttonColor,
-                      label: 'Edit Profile',
+                      label: 'Save Changes',
                       onPressed: () async {
                         await FirebaseFirestore.instance
                             .collection('Users')
@@ -244,62 +365,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    ButtonWidget(
-                      radius: 10,
-                      color: buttonColor,
-                      label: 'Logout',
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                                  title: const Text(
-                                    'Logout Confirmation',
-                                    style: TextStyle(
-                                        fontFamily: 'Bold',
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  content: const Text(
-                                    'Are you sure you want to Logout?',
-                                    style: TextStyle(fontFamily: 'Regular'),
-                                  ),
-                                  actions: <Widget>[
-                                    MaterialButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(true),
-                                      child: const Text(
-                                        'Close',
-                                        style: TextStyle(
-                                            fontFamily: 'Regular',
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    MaterialButton(
-                                      onPressed: () async {
-                                        await FirebaseAuth.instance.signOut();
-                                        Navigator.of(context).pushReplacement(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const LoginScreen()));
-                                      },
-                                      child: const Text(
-                                        'Continue',
-                                        style: TextStyle(
-                                            fontFamily: 'Regular',
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ],
-                                ));
-                      },
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
                   ],
                 ),
               ),
             );
           }),
     ));
+  }
+
+  void dateFromPicker(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+        builder: (context, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: ColorScheme.light(
+                primary: primary,
+                onPrimary: Colors.white,
+                onSurface: Colors.grey,
+              ),
+            ),
+            child: child!,
+          );
+        },
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1900),
+        lastDate: DateTime(2050));
+
+    if (pickedDate != null) {
+      String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+
+      setState(() {
+        dateController.text = formattedDate;
+      });
+    } else {
+      return null;
+    }
   }
 }

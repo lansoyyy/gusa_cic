@@ -123,7 +123,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 10,
                             ),
                             Container(
-                              color: Colors.blue[200],
+                              decoration: BoxDecoration(
+                                color: Colors.blue[200],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                               height: 150,
                               child: Padding(
                                 padding: const EdgeInsets.all(10.0),
@@ -151,35 +154,57 @@ class _HomeScreenState extends State<HomeScreen> {
                                       }
 
                                       final data = snapshot.requireData;
-                                      return Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          for (int i = 0;
-                                              i < data.docs.length;
-                                              i++)
-                                            Column(
+                                      return SingleChildScrollView(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
                                               children: [
-                                                Container(
-                                                  height: 100,
-                                                  width: double.infinity,
-                                                  decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                          image: NetworkImage(
-                                                              data.docs[i]
-                                                                  ['img']),
-                                                          fit: BoxFit.cover)),
+                                                const Icon(
+                                                  Icons.account_circle_rounded,
+                                                  color: Colors.white,
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
                                                 ),
                                                 TextWidget(
-                                                  text:
-                                                      '- ${data.docs[i]['desc']}',
-                                                  fontSize: 12,
-                                                  color: Colors.black,
-                                                  fontFamily: 'Medium',
+                                                  text: 'BARANGAY GUSA',
+                                                  fontSize: 14,
+                                                  color: Colors.white,
+                                                  fontFamily: 'Bold',
                                                 ),
                                               ],
                                             ),
-                                        ],
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            for (int i = 0;
+                                                i < data.docs.length;
+                                                i++)
+                                              Column(
+                                                children: [
+                                                  Container(
+                                                    height: 100,
+                                                    width: double.infinity,
+                                                    decoration: BoxDecoration(
+                                                        image: DecorationImage(
+                                                            image: NetworkImage(
+                                                                data.docs[i]
+                                                                    ['img']),
+                                                            fit: BoxFit.cover)),
+                                                  ),
+                                                  TextWidget(
+                                                    text:
+                                                        '- ${data.docs[i]['desc']}',
+                                                    fontSize: 12,
+                                                    color: Colors.black,
+                                                    fontFamily: 'Medium',
+                                                  ),
+                                                ],
+                                              ),
+                                          ],
+                                        ),
                                       );
                                     }),
                               ),
@@ -312,7 +337,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                     child:
                                                                         Padding(
                                                                       padding: const EdgeInsets
-                                                                          .all(
+                                                                              .all(
                                                                           10.0),
                                                                       child:
                                                                           Column(

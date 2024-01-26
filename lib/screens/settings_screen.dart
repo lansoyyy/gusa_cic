@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gusa_cic/widgets/text_widget.dart';
+import 'package:gusa_cic/widgets/toast_widget.dart';
 
-import 'myreports_screen.dart';
+import '../utils/colors.dart';
+import '../widgets/button_widget.dart';
+import '../widgets/textfield_widget.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -14,6 +18,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool isChecked1 = false;
   bool isChecked2 = false;
   bool isChecked3 = false;
+
+  final currentPassword = TextEditingController();
+
+  final newPassword = TextEditingController();
+
+  final newConfirmPassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,93 +42,79 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(50, 20, 50, 20),
+          padding: const EdgeInsets.fromLTRB(30, 20, 50, 20),
           child: SafeArea(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ListTile(
-                  title: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const MyreportsScreen()));
-                    },
-                    child: TextWidget(
-                      text: 'My Reports',
-                      fontSize: 18,
-                      fontFamily: 'Bold',
-                    ),
-                  ),
-                  trailing: const Icon(Icons.arrow_right),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Checkbox(
-                      value: isChecked1,
-                      onChanged: (value) {
-                        setState(() {
-                          isChecked1 = value!;
-                        });
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
                       },
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                      ),
                     ),
                     TextWidget(
-                      text: 'Allow notifications',
+                      text: 'Change Password',
                       fontSize: 18,
                       fontFamily: 'Bold',
+                      color: Colors.white,
                     ),
                   ],
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 20,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 50),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Checkbox(
-                        value: isChecked2,
-                        onChanged: (value) {
-                          setState(() {
-                            isChecked2 = value!;
-                          });
-                        },
-                      ),
-                      TextWidget(
-                        text: 'Sound',
-                        fontSize: 18,
-                        fontFamily: 'Bold',
-                      ),
-                    ],
-                  ),
+                TextFieldWidget(
+                  isObscure: true,
+                  showEye: true,
+                  prefixIcon: Icons.lock,
+                  controller: currentPassword,
+                  label: 'Old Password',
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 20,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 50),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Checkbox(
-                        value: isChecked3,
-                        onChanged: (value) {
-                          setState(() {
-                            isChecked3 = value!;
-                          });
-                        },
-                      ),
-                      TextWidget(
-                        text: 'Vibrate',
-                        fontSize: 18,
-                        fontFamily: 'Bold',
-                      ),
-                    ],
+                TextFieldWidget(
+                  isObscure: true,
+                  showEye: true,
+                  prefixIcon: Icons.lock,
+                  controller: newPassword,
+                  label: 'New Password',
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFieldWidget(
+                  isObscure: true,
+                  showEye: true,
+                  prefixIcon: Icons.lock,
+                  controller: newConfirmPassword,
+                  label: 'Confirm password',
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+                Center(
+                  child: ButtonWidget(
+                    radius: 20,
+                    width: 250,
+                    color: buttonColor,
+                    label: 'Change Password',
+                    onPressed: () {
+                      if (newConfirmPassword.text == newPassword.text) {
+                        changePassword(
+                            currentPassword.text, newPassword.text, context);
+                      } else {
+                        showToast('Password do not match!');
+                      }
+                    },
                   ),
                 ),
               ],
@@ -127,5 +123,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
     );
+  }
+
+  static Future<String?> changePassword(
+      String oldPassword, String newPassword, context) async {
+    User user = FirebaseAuth.instance.currentUser!;
+    AuthCredential credential =
+        EmailAuthProvider.credential(email: user.email!, password: oldPassword);
+
+    Map<String, String?> codeResponses = {
+      // Re-auth responses
+      "user-mismatch": null,
+      "user-not-found": null,
+      "invalid-credential": null,
+      "invalid-email": null,
+      "wrong-password": null,
+      "invalid-verification-code": null,
+      "invalid-verification-id": null,
+      // Update password error codes
+      "weak-password": null,
+      "requires-recent-login": null
+    };
+
+    try {
+      await user.reauthenticateWithCredential(credential);
+      await user.updatePassword(newPassword);
+      showToast('password has been changed!');
+      Navigator.pop(context);
+      return null;
+    } on FirebaseAuthException catch (error) {
+      showToast('password hasnt been changed');
+      return codeResponses[error.code] ?? "Unknown";
+    }
   }
 }
