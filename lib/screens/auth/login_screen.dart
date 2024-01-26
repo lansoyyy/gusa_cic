@@ -20,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final passController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -249,33 +250,29 @@ class _LoginScreenState extends State<LoginScreen> {
                                 builder: (context) {
                                   return AlertDialog(
                                     title: TextWidget(
-                                      text: 'Enter Admin Password',
+                                      text: 'Enter Admin Account',
                                       fontSize: 18,
                                       fontFamily: 'Bold',
                                     ),
-                                    content: SizedBox(
-                                      height: 100,
-                                      child: TextFieldWidget(
-                                          textColor: Colors.black,
-                                          label: 'Password',
-                                          showEye: true,
-                                          isObscure: true,
-                                          controller: passController),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        TextFieldWidget(
+                                            textColor: Colors.black,
+                                            label: 'Email',
+                                            controller: emailController),
+                                        TextFieldWidget(
+                                            textColor: Colors.black,
+                                            label: 'Password',
+                                            showEye: true,
+                                            isObscure: true,
+                                            controller: passwordController)
+                                      ],
                                     ),
                                     actions: [
                                       TextButton(
                                         onPressed: () {
-                                          if (passController.text !=
-                                              'admin-password') {
-                                            Navigator.pop(context);
-                                            showToast(
-                                                'Incorrect admin password!');
-                                          } else {
-                                            Navigator.of(context).pushReplacement(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const AdminHomeScreen()));
-                                          }
+                                          login(context);
                                         },
                                         child: TextWidget(
                                           text: 'Continue',
@@ -313,9 +310,16 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
-      showToast('Logged in succesfully!');
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen()));
+
+      if (emailController.text == 'admin@gmail.com') {
+        showToast('Logged in as admin!');
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const AdminHomeScreen()));
+      } else {
+        showToast('Logged in succesfully!');
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomeScreen()));
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         showToast("No user found with that email.");

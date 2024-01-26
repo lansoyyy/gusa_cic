@@ -7,7 +7,7 @@ import 'package:gusa_cic/widgets/text_widget.dart';
 import 'package:intl/intl.dart';
 
 import '../auth/login_screen.dart';
-import 'admin_reports_screen.dart';
+import '../settings_screen.dart';
 import 'announcement_screen.dart';
 
 class AdminHomeScreen extends StatelessWidget {
@@ -421,12 +421,11 @@ class AdminHomeScreen extends StatelessWidget {
                           IconButton(
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => AdminReportsScreen(
-                                        type: 'Concern',
-                                      )));
+                                  builder: (context) =>
+                                      const SettingsScreen()));
                             },
                             icon: const Icon(
-                              Icons.report,
+                              Icons.settings,
                               size: 45,
                             ),
                           ),
