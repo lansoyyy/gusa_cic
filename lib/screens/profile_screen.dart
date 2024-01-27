@@ -230,7 +230,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     TextFieldWidget(
                       prefixIcon: Icons.bloodtype,
-                      controller: addressController,
+                      controller: bloodtypeController,
                       label: 'Blood Type',
                     ),
                     TextFieldWidget(
