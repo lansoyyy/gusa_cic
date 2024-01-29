@@ -35,13 +35,19 @@ class _LoginScreenState extends State<SignupScreen> {
     'B-',
     'AB+',
     'AB-',
-    'N/A',
+    'Unknown',
+  ];
+
+  List<String> genders = [
+    'Male',
+    'Female',
+    'Other',
   ];
   late String fileName = '';
 
   late File imageFile;
 
-  String selectedGender = '';
+  String selectedGender = 'Male';
   late String imageURL = '';
 
   Future<void> uploadPicture(String inputSource) async {
@@ -222,53 +228,47 @@ class _LoginScreenState extends State<SignupScreen> {
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white),
                             ),
-                            RadioListTile<String>(
-                              title: const Text(
-                                'Male',
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
-                              value: 'Male',
-                              groupValue: selectedGender,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedGender = value!;
-                                });
-                              },
+                            const SizedBox(
+                              height: 5,
                             ),
-                            RadioListTile<String>(
-                              title: const Text(
-                                'Female',
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
-                              value: 'Female',
-                              groupValue: selectedGender,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedGender = value!;
-                                });
-                              },
-                            ),
-                            RadioListTile<String>(
-                              title: const Text(
-                                'Other',
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
-                              value: 'Other',
-                              groupValue: selectedGender,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedGender = value!;
-                                });
-                              },
+                            Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.black,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: DropdownButton<String>(
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      selectedGender = newValue.toString();
+                                    });
+                                  },
+                                  underline: const SizedBox(),
+                                  value: selectedGender,
+                                  items: genders.map((String item) {
+                                    return DropdownMenuItem<String>(
+                                      value: item,
+                                      child: Center(
+                                        child: SizedBox(
+                                          width: 250,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(5.0),
+                                            child: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontFamily: 'QRegular',
+                                                  fontSize: 14),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                )),
+                            const SizedBox(
+                              height: 10,
                             ),
                             TextFieldWidget(
                               inputType: TextInputType.number,
@@ -565,7 +565,7 @@ class _LoginScreenState extends State<SignupScreen> {
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime(1900),
-        lastDate: DateTime(2050));
+        lastDate: DateTime.now());
 
     if (pickedDate != null) {
       String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
