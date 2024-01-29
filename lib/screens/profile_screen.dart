@@ -101,6 +101,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  String selectedBloodType = 'O+'; // Variable to store the selected blood type
+
+  // List of blood types
+  List<String> bloodTypes = [
+    'O+',
+    'O-',
+    'A+',
+    'A-',
+    'B+',
+    'B-',
+    'AB+',
+    'AB-',
+    'Unknown',
+  ];
+
+  List<String> genders = [
+    'Male',
+    'Female',
+    'Other',
+  ];
+
+  String selectedGender = 'Male';
+  String newSelectedGender = '';
+  String newSelectedBloodtype = '';
+
+  bool hasGender = true;
+  bool hasBloodtype = true;
+
   @override
   Widget build(BuildContext context) {
     final Stream<DocumentSnapshot> userData = FirebaseFirestore.instance
@@ -135,7 +163,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             phonenumberController.text = data['mobilenumber'];
             addressController.text = data['address'];
-            bloodtypeController.text = data['bloodtype'];
 
             emailController.text = data['email'];
 
@@ -228,10 +255,115 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       controller: addressController,
                       label: 'Home Address',
                     ),
-                    TextFieldWidget(
-                      prefixIcon: Icons.bloodtype,
-                      controller: bloodtypeController,
-                      label: 'Blood Type',
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Blood Type: ${data['bloodtype']}',
+                      style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: Colors.black,
+                            ),
+                            borderRadius: BorderRadius.circular(5)),
+                        child: DropdownButton<String>(
+                          onChanged: (newValue) {
+                            setState(() {
+                              selectedBloodType = newValue.toString();
+                              hasBloodtype = true;
+                              newSelectedBloodtype = newValue.toString();
+                            });
+                          },
+                          underline: const SizedBox(),
+                          value: selectedBloodType == ''
+                              ? data['bloodtype']
+                              : selectedBloodType,
+                          items: bloodTypes.map((String item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Center(
+                                child: SizedBox(
+                                  width: 250,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text(
+                                      item,
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'QRegular',
+                                          fontSize: 14),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        )),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Select Gender: ${data['gender']}',
+                      style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: Colors.black,
+                            ),
+                            borderRadius: BorderRadius.circular(5)),
+                        child: DropdownButton<String>(
+                          onChanged: (newValue) {
+                            setState(() {
+                              selectedGender = newValue.toString();
+                              hasGender = true;
+                              newSelectedGender = newValue.toString();
+                            });
+                          },
+                          underline: const SizedBox(),
+                          value: selectedGender,
+                          items: genders.map((String item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Center(
+                                child: SizedBox(
+                                  width: 250,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text(
+                                      item,
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'QRegular',
+                                          fontSize: 14),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        )),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const SizedBox(
+                      height: 10,
                     ),
                     TextFieldWidget(
                       isEnabled: false,
@@ -356,7 +488,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             .update({
                           'mobilenumber': phonenumberController.text,
                           'address': addressController.text,
-                          'bloodtype': bloodtypeController.text,
+                          'bloodtype': newSelectedBloodtype != ''
+                              ? newSelectedBloodtype
+                              : data['bloodtype'],
+                          'gender': newSelectedGender != ''
+                              ? newSelectedGender
+                              : data['gender'],
                         });
 
                         showToast('Saved succesfully!');

@@ -43,11 +43,12 @@ class _LoginScreenState extends State<SignupScreen> {
     'Female',
     'Other',
   ];
+
+  String selectedGender = 'Male';
   late String fileName = '';
 
   late File imageFile;
 
-  String selectedGender = 'Male';
   late String imageURL = '';
 
   Future<void> uploadPicture(String inputSource) async {
